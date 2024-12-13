@@ -7,4 +7,6 @@ public interface PaymentSvc {
     String Save(PaymentDTO payment);
 
     String UpgradeSite(PaymentDTO payment);
+
+    String Read(PaymentDTO payment);
 }

@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.UUID;
 
 public class FileUtil {
-    private static final String UPLOAD_DIR = "/Users/heejunida/Desktop/Education/FinalProject";
+    private static final String UPLOAD_DIR = "/Users/heejunida/Desktop/FinalProject/codetouch_Company_Server/src/main/resources/static";
     public static String imageSave(MultipartFile file){
         if(file.isEmpty()){
             return null;

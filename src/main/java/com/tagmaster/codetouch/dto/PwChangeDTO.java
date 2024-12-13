@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class PwChangeDTO {
     private String email;
-    private String Password;
+    private String password;
 }

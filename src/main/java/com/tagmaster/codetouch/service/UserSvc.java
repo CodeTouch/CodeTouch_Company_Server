@@ -2,6 +2,7 @@ package com.tagmaster.codetouch.service;
 
 import com.tagmaster.codetouch.dto.PwChangeDTO;
 import com.tagmaster.codetouch.dto.PwFindDTO;
+import com.tagmaster.codetouch.dto.company.ChangeInfoDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
 import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
@@ -13,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class FindSvc {
+public class UserSvc {
     private final CompanyUserRepo companyUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final CustomerUserRepo customerUserRepository;
 
-    public FindSvc(CompanyUserRepo companyUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerUserRepo customerUserRepository) {
+    public UserSvc(CompanyUserRepo companyUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerUserRepo customerUserRepository) {
         this.companyUserRepository = companyUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.customerUserRepository = customerUserRepository;
@@ -64,5 +65,31 @@ public class FindSvc {
         } catch (Exception e) {
             return "ERROR";
         }
+    }
+    public Boolean changeUserInfo(ChangeInfoDTO changeInfoDTO){
+        try {
+            CompanyUser companyUser = companyUserRepository.findByEmail(changeInfoDTO.getEmail());
+            if (companyUser == null) {
+                return false;
+            }
+            companyUser.setNickname(changeInfoDTO.getNickname());
+            companyUserRepository.save(companyUser);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public Boolean isPwCorrect(PwChangeDTO pwChangeDTO) {
+        CompanyUser companyUser = companyUserRepository.findByEmail(pwChangeDTO.getEmail());
+        if (companyUser == null) {
+            return false;
+        }
+        String oldPassword = companyUser.getPassword();
+        String password = pwChangeDTO.getPassword();
+        String encryptedPassword = bCryptPasswordEncoder.encode(password);
+        if (bCryptPasswordEncoder.matches(password, oldPassword)) {
+            return true;
+        }
+        return false;
     }
 }

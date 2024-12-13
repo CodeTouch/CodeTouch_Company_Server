@@ -14,17 +14,14 @@ import java.time.LocalDate;
 @Service
 public class SignupSvc {
     private final CompanyUserRepo companyUserRepository;
-    private final CustomerUserRepo customerUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public SignupSvc(
             CompanyUserRepo companyUserRepository,
-            BCryptPasswordEncoder bCryptPasswordEncoder,
-            CustomerUserRepo customerUserRepository
+            BCryptPasswordEncoder bCryptPasswordEncoder
     ) {
         this.companyUserRepository = companyUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.customerUserRepository = customerUserRepository;
     }
 
     @Transactional("chainedTransactionManager")
@@ -48,18 +45,7 @@ public class SignupSvc {
         companyUser.setGender(signupDTO.getGender());
         companyUser.setBirth(LocalDate.parse(signupDTO.getBirth()));
 
-        CustomerUser customerUser = new CustomerUser();
-        customerUser.setNickname(signupDTO.getNickname());
-        customerUser.setPassword(bCryptPasswordEncoder.encode(signupDTO.getPassword()));
-        customerUser.setName(signupDTO.getName());
-        customerUser.setPhone(signupDTO.getPhone());
-        customerUser.setEmail(email);
-        customerUser.setGender(signupDTO.getGender());
-        customerUser.setBirth(LocalDate.parse(signupDTO.getBirth()));
-        customerUser.setRole("USER,ADMIN");
-
         companyUserRepository.save(companyUser);
-        customerUserRepository.save(customerUser);
     }
 
     public Boolean isEmailAvailable(String email){

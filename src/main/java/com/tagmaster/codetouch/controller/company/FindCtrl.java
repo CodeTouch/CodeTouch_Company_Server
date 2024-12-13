@@ -2,7 +2,7 @@ package com.tagmaster.codetouch.controller.company;
 
 import com.tagmaster.codetouch.dto.PwChangeDTO;
 import com.tagmaster.codetouch.dto.PwFindDTO;
-import com.tagmaster.codetouch.service.FindSvc;
+import com.tagmaster.codetouch.service.UserSvc;
 import com.tagmaster.codetouch.service.identity.AuthSvc;
 import com.tagmaster.codetouch.util.TokenUtil;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/회사")
 public class FindCtrl {
-    private final FindSvc findSvc;
+    private final UserSvc findSvc;
     private final AuthSvc authSvc;
 
-    public FindCtrl(FindSvc findSvc, AuthSvc authSvc) {
+    public FindCtrl(UserSvc findSvc, AuthSvc authSvc) {
         this.findSvc = findSvc;
         this.authSvc = authSvc;
     }

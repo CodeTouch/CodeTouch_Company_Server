@@ -22,6 +22,6 @@ public class Payment {
     @JoinColumn(name = "userId", nullable = false)
     private CompanyUser user;
     private int siteId;
-
+    private String merchantId;
     private LocalDateTime createdAt;
 }

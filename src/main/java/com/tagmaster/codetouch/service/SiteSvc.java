@@ -2,14 +2,17 @@ package com.tagmaster.codetouch.service;
 
 
 import com.tagmaster.codetouch.dto.CreateSiteDTO;
+import com.tagmaster.codetouch.dto.company.SignupDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
 import com.tagmaster.codetouch.entity.customer.Site;
 import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerSiteRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,26 +21,54 @@ public class SiteSvc {
     private final CompanyUserRepo companyUserRepo;
     private final CustomerUserRepo customerUserRepo;
     private final CustomerSiteRepo customerSiteRepo;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public SiteSvc(CompanyUserRepo companyUserRepo, CustomerUserRepo customerUserRepo, CustomerSiteRepo customerSiteRepo) {
+    public SiteSvc(CompanyUserRepo companyUserRepo, CustomerUserRepo customerUserRepo, CustomerSiteRepo customerSiteRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.companyUserRepo = companyUserRepo;
         this.customerUserRepo = customerUserRepo;
         this.customerSiteRepo = customerSiteRepo;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
     public Site siteCreate(CreateSiteDTO createSiteDTO) {
-        CompanyUser user = companyUserRepo.findByEmail(createSiteDTO.getEmail());
-        if (user == null) {
-            return null;
+        try {
+            CompanyUser user = companyUserRepo.findByEmail(createSiteDTO.getEmail());
+            if (user == null) {
+                return null;
+            }
+            // 커스터머 유저에 컴퍼니 기본 정보 넣어주기
+            CustomerUser customerUser = new CustomerUser();
+            customerUser.setNickname(user.getNickname());
+            customerUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            customerUser.setName(user.getName());
+            customerUser.setPhone(user.getPhone());
+            customerUser.setEmail(user.getEmail());
+            customerUser.setGender(user.getGender());
+            customerUser.setBirth((user.getBirth()));
+            customerUser.setAgree(1);
+            customerUser.setRole("USER,ADMIN");
+            customerUserRepo.save(customerUser);
+            //처음에 넣어주고
+            try {
+                // 사이트 생성
+                Site site = new Site();
+                site.setSiteName(createSiteDTO.getSiteName());
+                site.setUserId(customerUser);
+                site.setPayState(0);
+                customerSiteRepo.save(site);
+
+                customerUser.setSiteId(site.getSiteId());
+                customerUserRepo.save(customerUser);
+                // 사이트 생성이후
+                // 위에 커스터머 유저에 사이트 주입
+                // 커스터머 유저 세이브
+                return site;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        List<CustomerUser> customerUser = customerUserRepo.findByEmail(user.getEmail());
-        for (CustomerUser cu : customerUser) {
-            Site site = new Site();
-            site.setSiteName(createSiteDTO.getSiteName());
-            site.setUserId(cu);
-            site.setPayState(0);
-            customerSiteRepo.save(site);
-        }
-        return new Site();
     }
 
     public List<Site> siteRead(String email) {

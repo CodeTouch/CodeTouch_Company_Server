@@ -1,6 +1,7 @@
 package com.tagmaster.codetouch.controller;
 
 import com.tagmaster.codetouch.dto.CreateSiteDTO;
+import com.tagmaster.codetouch.dto.company.SignupDTO;
 import com.tagmaster.codetouch.entity.customer.Site;
 import com.tagmaster.codetouch.service.SiteSvc;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,13 @@ public class SiteCtrl {
     public SiteCtrl(SiteSvc siteSvc) {
         this.siteSvc = siteSvc;
     }
+    @PostMapping("/회원/사이트생성")
     public ResponseEntity<String> createSite(@RequestBody CreateSiteDTO createSiteDTO) {
 
+        if (siteSvc.siteCreate(createSiteDTO) == null) {
+            return ResponseEntity.badRequest().body("사이트 생성에 실패하였습니다. 다시 시도해주세요.");
+        }
+        return ResponseEntity.ok("사이트 생성에 성공하였습니다!");
     }
 
     @GetMapping("/회원/사이트정보/{email}")
