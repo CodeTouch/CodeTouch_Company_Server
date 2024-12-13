@@ -1,10 +1,10 @@
-package com.tagmaster.codetouch.service;
+package com.tagmaster.codetouch.service.company;
 
-import com.tagmaster.codetouch.dto.SignupDTO;
+import com.tagmaster.codetouch.dto.company.SignupDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
-import com.tagmaster.codetouch.repository.company.CompanyUserRepository;
-import com.tagmaster.codetouch.repository.customer.CustomerUserRepository;
+import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
+import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 @Service
-public class SignupService {
-    private final CompanyUserRepository companyUserRepository;
-    private final CustomerUserRepository customerUserRepository;
+public class SignupSvc {
+    private final CompanyUserRepo companyUserRepository;
+    private final CustomerUserRepo customerUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public SignupService(
-            CompanyUserRepository companyUserRepository,
+    public SignupSvc(
+            CompanyUserRepo companyUserRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder,
-            CustomerUserRepository customerUserRepository
+            CustomerUserRepo customerUserRepository
     ) {
         this.companyUserRepository = companyUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -56,9 +56,13 @@ public class SignupService {
         customerUser.setEmail(email);
         customerUser.setGender(signupDTO.getGender());
         customerUser.setBirth(LocalDate.parse(signupDTO.getBirth()));
+        customerUser.setRole("USER,ADMIN");
 
         companyUserRepository.save(companyUser);
         customerUserRepository.save(customerUser);
     }
 
+    public Boolean isEmailAvailable(String email){
+        return !companyUserRepository.existsByEmail(email);
+    }
 }

@@ -1,4 +1,4 @@
-package com.tagmaster.codetouch.dto;
+package com.tagmaster.codetouch.dto.company;
 
 import lombok.Getter;
 import lombok.Setter;

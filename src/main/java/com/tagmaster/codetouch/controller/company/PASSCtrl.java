@@ -1,10 +1,11 @@
-package com.tagmaster.codetouch.controller;
+package com.tagmaster.codetouch.controller.company;
 
 import com.tagmaster.codetouch.dto.APIPhoneDTO;
 import com.tagmaster.codetouch.dto.APISignupDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
-import com.tagmaster.codetouch.repository.company.CompanyUserRepository;
-import com.tagmaster.codetouch.service.identity.AuthService;
+import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
+import com.tagmaster.codetouch.service.identity.AuthSvc;
+import com.tagmaster.codetouch.util.TokenUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +18,10 @@ import java.util.Map;
 @RequestMapping("/패스")
 public class PASSCtrl {
 
-    private final AuthService authService;
-    private final CompanyUserRepository companyUserRepository;
+    private final AuthSvc authService;
+    private final CompanyUserRepo companyUserRepository;
 
-    public PASSCtrl(AuthService authService, CompanyUserRepository companyUserRepository) {
+    public PASSCtrl(AuthSvc authService, CompanyUserRepo companyUserRepository) {
         this.authService = authService;
         this.companyUserRepository = companyUserRepository;
     }
@@ -29,7 +30,7 @@ public class PASSCtrl {
     public ResponseEntity<Map<String, Object>> getCertifications(@PathVariable String imp_uid) {
         try {
             Map<String, Object> response = new HashMap<>();
-            String accessToken = authService.TokenService();
+            String accessToken = TokenUtil.TokenUtil();
             APISignupDTO dto = authService.AuthReqService(APISignupDTO.class, imp_uid, accessToken);
             response.put("success", "api로 개인정보 받기 성공");
             response.put("data", dto);
@@ -45,7 +46,7 @@ public class PASSCtrl {
     public ResponseEntity<Map<String, Object>> EmailFind(@PathVariable String imp_uid) {
         try {
             Map<String, Object> response = new HashMap<>();
-            String accessToken = authService.TokenService();
+            String accessToken = TokenUtil.TokenUtil();
             APIPhoneDTO dto = authService.AuthReqService(APIPhoneDTO.class, imp_uid, accessToken);
             CompanyUser user = companyUserRepository.findByPhone(dto.getPhone());
             List<CompanyUser> test = companyUserRepository.findAll();

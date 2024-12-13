@@ -18,7 +18,7 @@ public class Site {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer siteId;
+    private int siteId;
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)

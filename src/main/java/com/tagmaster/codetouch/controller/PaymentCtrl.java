@@ -1,7 +1,6 @@
 package com.tagmaster.codetouch.controller;
 
 import com.tagmaster.codetouch.dto.PaymentDTO;
-import com.tagmaster.codetouch.dto.SignupDTO;
 import com.tagmaster.codetouch.service.PaymentSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,8 @@ public class PaymentCtrl {
     @PostMapping("/회원/결제내역저장")
     public ResponseEntity<String> signup(@RequestBody PaymentDTO paymentDTO) {
         String message = "";
-        message = paymentSvc.Save(paymentDTO);
-        message = paymentSvc.UpgradeSite(paymentDTO);
+        message += paymentSvc.Save(paymentDTO);
+        message += paymentSvc.UpgradeSite(paymentDTO);
 
         return ResponseEntity.ok(message);
     }

@@ -2,6 +2,7 @@ package com.tagmaster.codetouch.entity.company;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,7 +17,7 @@ public class PaymentMethod {
     private String cardType;
     private String pw;
     private LocalDateTime cardExpiryDate;
-    private LocalDateTime birth;
+    private LocalDate birth;
     private String password;
     private LocalDateTime createdAt;
 }

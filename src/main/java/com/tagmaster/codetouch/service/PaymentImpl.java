@@ -4,26 +4,27 @@ import com.tagmaster.codetouch.dto.PaymentDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.company.Payment;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
+
 import com.tagmaster.codetouch.entity.customer.Site;
-import com.tagmaster.codetouch.repository.company.CompanyUserRepository;
-import com.tagmaster.codetouch.repository.company.PaymentRepository;
+import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
+import com.tagmaster.codetouch.repository.company.PaymentRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerSiteRepo;
-import com.tagmaster.codetouch.repository.customer.CustomerUserRepository;
+import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentImpl implements PaymentSvc {
-    private final CustomerUserRepository customerUserRepository;
-    private final PaymentRepository paymentRepository;
-    private final CompanyUserRepository companyUserRepository;
+    private final CustomerUserRepo customerUserRepository;
+    private final PaymentRepo paymentRepository;
+    private final CompanyUserRepo companyUserRepository;
     private final CustomerSiteRepo customerSiteRepo;
 
     @Autowired
-    public PaymentImpl(PaymentRepository paymentRepository,
-                       CompanyUserRepository companyUserRepository,
-                       CustomerUserRepository customerUserRepository,
+    public PaymentImpl(PaymentRepo paymentRepository,
+                       CompanyUserRepo companyUserRepository,
+                       CustomerUserRepo customerUserRepository,
                        CustomerSiteRepo customerSiteRepo) {
         this.paymentRepository = paymentRepository;
         this.companyUserRepository = companyUserRepository;
@@ -34,7 +35,7 @@ public class PaymentImpl implements PaymentSvc {
     @Override
     public String Save(PaymentDTO paymentDTO) {
         try {
-            CompanyUser user = companyUserRepository.findByEmail(paymentDTO.getUserEmail());
+            CompanyUser user = companyUserRepository.findByEmail(paymentDTO.getEmail());
             if(user == null) {
                 return "에러";
             }
@@ -54,12 +55,12 @@ public class PaymentImpl implements PaymentSvc {
     @Transactional
     public String UpgradeSite(PaymentDTO paymentDTO) {
         try {
-            CustomerUser user = customerUserRepository.findByEmailAndSiteId(paymentDTO.getUserEmail(), paymentDTO.getSiteId());
+            CustomerUser user = customerUserRepository.findByEmailAndSiteId(paymentDTO.getEmail(), paymentDTO.getSiteId());
             if (user == null) {
                 return "에러";
             }
             Site site = customerSiteRepo.findById(paymentDTO.getSiteId()).get();
-            site.setExpiry(paymentDTO.getExpiryDate());
+            site.setExpiry(paymentDTO.getExpiry());
             site.setPayState(1);
             customerSiteRepo.save(site);
             return "성공";

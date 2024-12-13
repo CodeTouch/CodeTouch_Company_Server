@@ -1,19 +1,19 @@
 package com.tagmaster.codetouch.service;
 
-import com.tagmaster.codetouch.dto.CustomUserDetails;
+import com.tagmaster.codetouch.dto.company.CustomUserDetails;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
-import com.tagmaster.codetouch.repository.company.CompanyUserRepository;
+import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsSvc implements UserDetailsService {
 
-    private final CompanyUserRepository companyUserRepository;
+    private final CompanyUserRepo companyUserRepository;
 
-    public CustomUserDetailsService(CompanyUserRepository companyUserRepository) {
+    public CustomUserDetailsSvc(CompanyUserRepo companyUserRepository) {
         this.companyUserRepository = companyUserRepository;
     }
 
