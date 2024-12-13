@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomerUserRepository extends JpaRepository<CustomerUser, Integer> {
-
+    CustomerUser findByEmailAndSiteId(String email, int siteId);
 }
