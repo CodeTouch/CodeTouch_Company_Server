@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class APIPhoneDTO {
-    private String phone;
+public class PwChangeDTO {
+    private String email;
+    private String password;
 }

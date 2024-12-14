@@ -1,4 +1,4 @@
-package com.tagmaster.codetouch.dto;
+package com.tagmaster.codetouch.dto.company;
 
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import org.springframework.security.core.GrantedAuthority;

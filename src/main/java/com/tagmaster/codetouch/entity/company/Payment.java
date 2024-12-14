@@ -22,9 +22,6 @@ public class Payment {
     @JoinColumn(name = "userId", nullable = false)
     private CompanyUser user;
     private int siteId;
-
-    @ManyToOne
-    @JoinColumn(name = "pmId", nullable = false)
-    private PaymentMethod paymentMethod;
+    private String merchantId;
     private LocalDateTime createdAt;
 }

@@ -29,10 +29,10 @@ public class CustomerUser {
     private int gender;
     @Column(columnDefinition = "json")
     private String address;
-    private Integer role;
-    private int mileage;
+    private String role;
+    private Integer mileage;
     private Integer agree;
-    private int businessNum;
-    private int reportNum;
+    private Integer businessNum;
+    private Integer reportNum;
 
 }

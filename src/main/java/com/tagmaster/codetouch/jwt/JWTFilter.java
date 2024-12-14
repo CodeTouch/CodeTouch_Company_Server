@@ -1,6 +1,6 @@
 package com.tagmaster.codetouch.jwt;
 
-import com.tagmaster.codetouch.dto.CustomUserDetails;
+import com.tagmaster.codetouch.dto.company.CustomUserDetails;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
