@@ -2,7 +2,6 @@ package com.tagmaster.codetouch.service;
 
 
 import com.tagmaster.codetouch.dto.CreateSiteDTO;
-import com.tagmaster.codetouch.dto.company.SignupDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
 import com.tagmaster.codetouch.entity.customer.Site;
@@ -12,7 +11,6 @@ import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

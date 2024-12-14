@@ -1,5 +1,6 @@
 package com.tagmaster.codetouch.service;
 
+import com.tagmaster.codetouch.dto.PayReadDTO;
 import com.tagmaster.codetouch.dto.PaymentDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.company.Payment;
@@ -10,9 +11,12 @@ import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import com.tagmaster.codetouch.repository.company.PaymentRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerSiteRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PaymentSvcImpl implements PaymentSvc {
@@ -22,18 +26,20 @@ public class PaymentSvcImpl implements PaymentSvc {
     private final CompanyUserRepo companyUserRepository;
     private final CustomerSiteRepo customerSiteRepo;
     private final PaymentRepo paymentRepo;
+    private final CustomerUserRepo customerUserRepo;
 
     @Autowired
     public PaymentSvcImpl(PaymentRepo paymentRepository,
-                       CompanyUserRepo companyUserRepository,
-                       CustomerUserRepo customerUserRepository,
-                       CustomerSiteRepo customerSiteRepo,
-                       PaymentRepo paymentRepo) {
+                          CompanyUserRepo companyUserRepository,
+                          CustomerUserRepo customerUserRepository,
+                          CustomerSiteRepo customerSiteRepo,
+                          PaymentRepo paymentRepo, CustomerUserRepo customerUserRepo) {
         this.paymentRepository = paymentRepository;
         this.companyUserRepository = companyUserRepository;
         this.customerUserRepository = customerUserRepository;
         this.customerSiteRepo = customerSiteRepo;
         this.paymentRepo = paymentRepo;
+        this.customerUserRepo = customerUserRepo;
     }
 
     @Override
@@ -72,31 +78,34 @@ public class PaymentSvcImpl implements PaymentSvc {
             throw new RuntimeException(e);
         }
     }
+
     @Override
-    @org.springframework.transaction.annotation.Transactional
-    public String Read(String email) {
-//        try {
-//            CompanyUser user = companyUserRepository.findByEmail(email);
-//            if (user == null) {
-//                return "에러";
-//            }
-//            List<PayReadDTO> receipt = new ArrayList<>();
-//            List<CustomerUser> customerUsers = customerUserRepository.findByEmail(email);
-//            for (CustomerUser customerUser : customerUsers) {
-//                receipt.add(new PayReadDTO());
-//                PayReadDTO payReadDTO = new PayReadDTO();
-//                payReadDTO.setUser(user);
-//                Site site = customerSiteRepo.findById(customerUser.getSiteId()).get();
-//                payReadDTO.setSiteName(site.getSiteName());
-//                Payment payment = paymentRepository.findByEmail(customerUser.getEmail());
-//                payReadDTO.setMerchantId(payment.merchantId);
-//                payReadDTO.setCreateAt(payment)
-//            }
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-        return null;
+    @Transactional("chainedTransactionManager")
+    public List<PayReadDTO> Read(String email) {
+        try {
+            List<PayReadDTO> payReadDTOList = new ArrayList<>();
+            CompanyUser user = companyUserRepository.findByEmail(email);
+            List<CustomerUser> cu = customerUserRepo.findByEmail(email);
+            // 사용자 권한 확인 (cus -> user_id, com -> user_id)
+            List<Site> sites = customerSiteRepo.findByEmail(email); // cus -> List<Site>
+            List<Payment> payments = paymentRepository.findByUser(user); // com -> List<Payment>
+            // 두 리스트의 데이터를 비교 및 처리
+            for (Payment payment : payments) {
+                for (Site site : sites) {
+                    if (payment.getSiteId() == (site.getSiteId())) { // site_id 매칭
+                        PayReadDTO dto = new PayReadDTO();
+                        dto.setSiteName(site.getSiteName());
+                        dto.setMerchantId(payment.getMerchantId());
+                        dto.setCreateAt(payment.getCreatedAt());
+                        payReadDTOList.add(dto);
+                        break; // 매칭 후 내부 루프 종료
+                    }
+                }
+            }
+            return payReadDTOList;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-//    return null;
     }
-//}
+}
+

@@ -10,4 +10,6 @@ import java.util.List;
 public interface CustomerUserRepo extends JpaRepository<CustomerUser, Integer> {
     CustomerUser findByEmailAndSiteId(String email, int siteId);
     List<CustomerUser> findByEmail(String email);
+
+    String findEmailByUser(CustomerUser userId);
 }
