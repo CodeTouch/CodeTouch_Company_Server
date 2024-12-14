@@ -1,6 +1,5 @@
 package com.tagmaster.codetouch.service;
 
-import com.tagmaster.codetouch.dto.PayReadDTO;
 import com.tagmaster.codetouch.dto.PaymentDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.company.Payment;
@@ -15,12 +14,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
-public class PaymentImpl implements PaymentSvc {
+public class PaymentSvcImpl implements PaymentSvc {
+
     private final CustomerUserRepo customerUserRepository;
     private final PaymentRepo paymentRepository;
     private final CompanyUserRepo companyUserRepository;
@@ -28,7 +24,7 @@ public class PaymentImpl implements PaymentSvc {
     private final PaymentRepo paymentRepo;
 
     @Autowired
-    public PaymentImpl(PaymentRepo paymentRepository,
+    public PaymentSvcImpl(PaymentRepo paymentRepository,
                        CompanyUserRepo companyUserRepository,
                        CustomerUserRepo customerUserRepository,
                        CustomerSiteRepo customerSiteRepo,
@@ -56,7 +52,6 @@ public class PaymentImpl implements PaymentSvc {
         } catch (Exception e) {
             return e.getMessage();
         }
-
     }
 
     @Override
@@ -77,8 +72,9 @@ public class PaymentImpl implements PaymentSvc {
             throw new RuntimeException(e);
         }
     }
-}
-//    public String Read(String email) {
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public String Read(String email) {
 //        try {
 //            CompanyUser user = companyUserRepository.findByEmail(email);
 //            if (user == null) {
@@ -99,7 +95,8 @@ public class PaymentImpl implements PaymentSvc {
 //
 //        } catch (Exception e) {
 //            throw new RuntimeException(e);
-//        }
+        return null;
+        }
 //    return null;
-//    }
+    }
 //}

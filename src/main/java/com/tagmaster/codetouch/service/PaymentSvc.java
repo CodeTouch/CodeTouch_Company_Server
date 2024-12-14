@@ -8,5 +8,5 @@ public interface PaymentSvc {
 
     String UpgradeSite(PaymentDTO payment);
 
-    String Read(PaymentDTO payment);
+    String Read(String email);
 }

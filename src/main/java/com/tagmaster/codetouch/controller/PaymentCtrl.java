@@ -28,7 +28,9 @@ public class PaymentCtrl {
     }
     @GetMapping("/회원/결제내역조회/{email}")
     public ResponseEntity<String> paymentRead(@PathVariable String email) {
-
+        String message = "";
+        message += paymentSvc.Read(email);
+        return ResponseEntity.ok(message);
     }
 }
 //merchantId => dto로만 받아와도 된다

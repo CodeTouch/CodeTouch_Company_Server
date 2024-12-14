@@ -7,9 +7,12 @@ import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
 import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
+import com.tagmaster.codetouch.util.FileUtil;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -66,19 +69,7 @@ public class UserSvc {
             return "ERROR";
         }
     }
-    public Boolean changeUserInfo(ChangeInfoDTO changeInfoDTO){
-        try {
-            CompanyUser companyUser = companyUserRepository.findByEmail(changeInfoDTO.getEmail());
-            if (companyUser == null) {
-                return false;
-            }
-            companyUser.setNickname(changeInfoDTO.getNickname());
-            companyUserRepository.save(companyUser);
-            return true;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
     public Boolean isPwCorrect(PwChangeDTO pwChangeDTO) {
         CompanyUser companyUser = companyUserRepository.findByEmail(pwChangeDTO.getEmail());
         if (companyUser == null) {
