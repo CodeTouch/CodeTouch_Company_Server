@@ -2,21 +2,19 @@ package com.tagmaster.codetouch.service;
 
 import com.tagmaster.codetouch.dto.PwChangeDTO;
 import com.tagmaster.codetouch.dto.PwFindDTO;
-import com.tagmaster.codetouch.dto.company.ChangeInfoDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
 import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
-import com.tagmaster.codetouch.util.FileUtil;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
+@ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public class UserSvc {
     private final CompanyUserRepo companyUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -47,7 +45,7 @@ public class UserSvc {
         }
     }
 
-    @Transactional("chainedTransactionManager")
+    @Transactional/*("chainedTransactionManager")*/
     public String changePw(PwChangeDTO pwChangeDTO) {
         CompanyUser companyUser = companyUserRepository.findByEmail(pwChangeDTO.getEmail());
         try {
@@ -77,10 +75,6 @@ public class UserSvc {
         }
         String oldPassword = companyUser.getPassword();
         String password = pwChangeDTO.getPassword();
-        String encryptedPassword = bCryptPasswordEncoder.encode(password);
-        if (bCryptPasswordEncoder.matches(password, oldPassword)) {
-            return true;
-        }
-        return false;
+        return bCryptPasswordEncoder.matches(password, oldPassword);
     }
 }

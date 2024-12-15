@@ -11,5 +11,4 @@ public interface CompanyUserRepo extends JpaRepository<CompanyUser, Integer> {
     CompanyUser findByEmail(String email);
     CompanyUser findByPhone(String phone);
 
-    String findAllById(CompanyUser user);
 }

@@ -4,12 +4,14 @@ import com.tagmaster.codetouch.dto.PwChangeDTO;
 import com.tagmaster.codetouch.dto.company.ChangeInfoDTO;
 import com.tagmaster.codetouch.service.ChangeUserInfoSvc;
 import com.tagmaster.codetouch.service.UserSvc;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/회사")
+@ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public class UserCtrl {
     private final UserSvc userSvc;
     private final ChangeUserInfoSvc changeUserInfoSvc;

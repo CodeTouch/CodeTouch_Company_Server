@@ -1,9 +1,9 @@
-package com.tagmaster.codetouch.controller;
+package com.tagmaster.codetouch.controller.customer;
 
 import com.tagmaster.codetouch.dto.CreateSiteDTO;
-import com.tagmaster.codetouch.dto.company.SignupDTO;
 import com.tagmaster.codetouch.entity.customer.Site;
-import com.tagmaster.codetouch.service.SiteSvc;
+import com.tagmaster.codetouch.service.customer.SiteSvc;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/고객")
+@ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public class SiteCtrl {
     private final SiteSvc siteSvc;
 

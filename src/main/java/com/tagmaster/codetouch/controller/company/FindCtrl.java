@@ -1,24 +1,54 @@
 package com.tagmaster.codetouch.controller.company;
 
+import com.tagmaster.codetouch.dto.APIPhoneDTO;
 import com.tagmaster.codetouch.dto.PwChangeDTO;
 import com.tagmaster.codetouch.dto.PwFindDTO;
+import com.tagmaster.codetouch.entity.company.CompanyUser;
+import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import com.tagmaster.codetouch.service.UserSvc;
 import com.tagmaster.codetouch.service.identity.AuthSvc;
 import com.tagmaster.codetouch.util.TokenUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/회사")
+@ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public class FindCtrl {
     private final UserSvc findSvc;
     private final AuthSvc authSvc;
+    private final CompanyUserRepo companyUserRepo;
 
-    public FindCtrl(UserSvc findSvc, AuthSvc authSvc) {
+    public FindCtrl(UserSvc findSvc, AuthSvc authSvc, CompanyUserRepo companyUserRepo) {
         this.findSvc = findSvc;
         this.authSvc = authSvc;
+        this.companyUserRepo = companyUserRepo;
     }
-
+    @GetMapping("/회원/아이디찾기/{imp_uid}")
+    public ResponseEntity<Map<String, Object>> EmailFind(@PathVariable String imp_uid) {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            String accessToken = TokenUtil.TokenUtil();
+            APIPhoneDTO dto = authSvc.AuthReqService(APIPhoneDTO.class, imp_uid, accessToken);
+            CompanyUser user = companyUserRepo.findByPhone(dto.getPhone());
+            List<CompanyUser> test = companyUserRepo.findAll();
+            if (user.getEmail() == null) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            response.put("success", "이메일로 받기 성공");
+            response.put("email", user.getEmail());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("fail", "이메일로 찾기 실패띠");
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
     @GetMapping("/회원/비번찾기/{email}/{imp_uid}")
     public ResponseEntity<String> pwAuth(@PathVariable String email, @PathVariable String imp_uid){
         String accessToken = TokenUtil.TokenUtil();

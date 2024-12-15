@@ -8,9 +8,9 @@ import lombok.Setter;
 public class SignupDTO {
     private String email;
     private String name;
+    private String phone;
     private String nickname;
     private String password;
-    private String phone;
     private String birth;
     private Integer gender;
 }

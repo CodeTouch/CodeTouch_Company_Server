@@ -1,11 +1,11 @@
-package com.tagmaster.codetouch.service;
+package com.tagmaster.codetouch.service.pay;
 
 import com.tagmaster.codetouch.dto.PayReadDTO;
 import com.tagmaster.codetouch.dto.PaymentDTO;
-import com.tagmaster.codetouch.entity.company.Payment;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.util.List;
-
+@ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public interface PaymentSvc {
     String Save(PaymentDTO payment);
 
