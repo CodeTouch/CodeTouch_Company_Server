@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class PaymentSvcImpl implements PaymentSvc {
             Payment payment = new Payment();
             payment.setUser(user);
             payment.setSiteId(paymentDTO.getSiteId());
+            payment.setMerchantId(paymentDTO.getMerchantId());
             paymentRepository.save(payment);
 
             return "성공";
@@ -82,8 +84,8 @@ public class PaymentSvcImpl implements PaymentSvc {
     }
 
     @Override
-    @Transactional/*("chainedTransactionManager")*/
-    public List<PayReadDTO> Read(String email) {
+    @Transactional("chainedTransactionManager")
+    public List<PayReadDTO> Read(String email, boolean check) {
         //리스트 생성 (response 용)
         List<PayReadDTO> receipt = new ArrayList<>();
         try {
@@ -93,16 +95,15 @@ public class PaymentSvcImpl implements PaymentSvc {
                 return null;
             }
 
-            List<Payment> paymentList = new ArrayList<>();
-            boolean isAll = true;
-            if (isAll){
+            List<Payment> paymentList;
+            if (check){
                 // 1번 전부를 요청했다.
                 // Payment 에서 해당 이메일로 전부 끌어서 List<Payment> 에 담아준다.
-                paymentList = paymentRepository.findByUserOrderByCreatedAtDesc(user);
+                paymentList = paymentRepository.findByUserOrderByCreateAtDesc(user);
             }else{
                 // 2번 3개만 요청한다.
                 // Payment 에서 해당 이메일로 3개만(createAt 가장 최근) List<Payment> 에 담아준다.
-                paymentList = paymentRepository.findTop3ByUserOrderByCreatedAtDesc(user);
+                paymentList = paymentRepository.findTop3ByUserOrderByCreateAtDesc(user);
                 // 3개를 레포지토리에서 가져온다.
 
             }
@@ -114,11 +115,11 @@ public class PaymentSvcImpl implements PaymentSvc {
 
             for (Payment payment : paymentList) {
                 PayReadDTO payReadDTO = new PayReadDTO();
-                payReadDTO.setMerchantId(payment.getMerchantId());
-                String createAtDate = DateAndGenderChange.DateTimeToDate(payment.getCreatedAt());
+                payReadDTO.setMerchantUid(payment.getMerchantId());
+                LocalDate createAtDate = DateAndGenderChange.DateTimeToDate(payment.getCreateAt());
                 payReadDTO.setCreateAt(createAtDate);
 
-                APIPaymentDTO apiPaymentDTO = getPaymentSvc.GetPayment(payment.getMerchantId());
+                APIPaymentDTO apiPaymentDTO = getPaymentSvc.APIPayment(payment.getMerchantId());
                 payReadDTO.setPayMethod(apiPaymentDTO.getPayMethod());
                 payReadDTO.setAmount(apiPaymentDTO.getAmount());
 

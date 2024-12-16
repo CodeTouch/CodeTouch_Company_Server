@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface PaymentRepo extends JpaRepository<Payment, Integer> {
-    List<Payment> findByUserOrderByCreatedAtDesc(CompanyUser user);
-    List<Payment> findTop3ByUserOrderByCreatedAtDesc(CompanyUser user);
+    List<Payment> findByUserOrderByCreateAtDesc(CompanyUser user);
+    List<Payment> findTop3ByUserOrderByCreateAtDesc(CompanyUser user);
 
 }

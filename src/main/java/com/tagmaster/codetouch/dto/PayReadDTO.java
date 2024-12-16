@@ -9,10 +9,10 @@ import java.time.LocalDate;
 @Setter
 public class PayReadDTO {
     private String siteName;
-    private String merchantId;
+    private String merchantUid;
     private LocalDate expiry;
     private String payMethod;
     private Integer amount;
     private Integer payState;
-    private String createAt;
+    private LocalDate createAt;
 }

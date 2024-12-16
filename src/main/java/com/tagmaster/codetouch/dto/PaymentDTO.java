@@ -11,4 +11,5 @@ public class PaymentDTO {
     private String email;
     private int siteId;
     private LocalDate expiry;
+    private String merchantId;
 }

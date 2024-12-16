@@ -31,14 +31,14 @@ public class PaymentCtrl {
             message += paymentSvc.UpgradeSite(paymentDTO);
 
             return ResponseEntity.ok(message);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("");
         }
     }
 
-    @GetMapping("/회원/결제내역조회/{email}")
-    public ResponseEntity<List<PayReadDTO>> paymentRead(@PathVariable String email) {
-        List<PayReadDTO> result = paymentSvc.Read(email);
+    @GetMapping("/회원/결제내역조회/{email}/{check}")
+    public ResponseEntity<List<PayReadDTO>> paymentRead(@PathVariable String email, @PathVariable boolean check) {
+        List<PayReadDTO> result = paymentSvc.Read(email, check);
         if (result == null) {
             return ResponseEntity.badRequest().body(null);
         }

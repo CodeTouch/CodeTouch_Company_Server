@@ -49,18 +49,4 @@ public class UserCtrl {
             return ResponseEntity.badRequest().body("에러");
         }
     }
-//    @PostMapping("/이미지저장")
-//    public ResponseEntity<String> imageSave(@RequestParam MultipartFile file) {
-//        try {
-//            String result = userSvc.upLoadImg(file);
-//            if (result.equals("FAIL")){
-//                return ResponseEntity.badRequest().body("이미지 저장을 실패하였습니다. (형식 에러 혹은 저장 실패 에러: jpg, png only)");
-//            }
-//            else{
-//                return ResponseEntity.ok(result);
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("이미지 저장시 에러가 발생했습니다.");
-//        }
-//    }
 }

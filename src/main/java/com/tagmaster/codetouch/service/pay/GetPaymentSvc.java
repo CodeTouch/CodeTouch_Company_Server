@@ -1,5 +1,6 @@
 package com.tagmaster.codetouch.service.pay;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tagmaster.codetouch.dto.APIPaymentDTO;
 import com.tagmaster.codetouch.util.TokenUtil;
 import org.springframework.http.HttpEntity;
@@ -10,14 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class GetPaymentSvc{
-    public APIPaymentDTO GetPayment(String merchantId){
+    public APIPaymentDTO APIPayment(String merchantId){
         APIPaymentDTO apiPaymentDTO = new APIPaymentDTO();
 
         RestTemplate restTemplate = new RestTemplate();
-        String paymentUrl = "https://api.iamport.kr/payments/" + merchantId;
+        String paymentUrl = "https://api.iamport.kr/payments/find/" + merchantId;
 
         String accessToken = TokenUtil.TokenUtil();
 
@@ -30,8 +32,15 @@ public class GetPaymentSvc{
         // API 호출
         ResponseEntity<Map> response = restTemplate.exchange(paymentUrl, HttpMethod.GET, request, Map.class);
 
-        apiPaymentDTO.setAmount((Integer) response.getBody().get("amount"));
-        apiPaymentDTO.setPayMethod((String) response.getBody().get("pay_method"));
+        Object responObject = response.getBody().get("response");
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> responseData = mapper.convertValue(responObject, Map.class);
+        Integer amount = (Integer) responseData.get("amount");
+        String paymentMethod = (String) responseData.get("pay_method");
+
+        apiPaymentDTO.setAmount(amount);
+        apiPaymentDTO.setPayMethod(paymentMethod);
         // 결제 정보 반환
         return apiPaymentDTO;
 

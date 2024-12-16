@@ -11,5 +11,5 @@ public interface PaymentSvc {
 
     String UpgradeSite(PaymentDTO payment);
 
-    List<PayReadDTO> Read(String email);
+    List<PayReadDTO> Read(String email, boolean check);
 }
