@@ -44,7 +44,7 @@ public class UserCtrl {
             if (userSvc.isPwCorrect(pwChangeDTO)){
                 return ResponseEntity.ok("비밀번호가 일치합니다.");
             }
-            return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다. 다시 시도해주세요.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("에러");
         }
