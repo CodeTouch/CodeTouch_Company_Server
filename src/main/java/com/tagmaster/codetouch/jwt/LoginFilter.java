@@ -62,17 +62,32 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             log.info(String.valueOf(chain));
             log.info(String.valueOf(authentication));
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal(); //user 가져나오기
-            String email = userDetails.getUsername(); //username 뽑아내기
+            String email = userDetails.getUsername();//username 뽑아내기
+            String name = userDetails.getName();
+            String imageUrl = userDetails.getImageUrl();
+            String nickname = userDetails.getNickname();
+            String phone = userDetails.getPhone();
 
 //            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();//collection 에서 authority를 뽑아낸다
 //            Iterator<? extends GrantedAuthority> iterator = authorities.iterator(); //iterator 를 통해서 반복을 시켜서 내부 객체를 뽑아 낸다
 //            GrantedAuthority auth = iterator.next();
             //role값 가져오기
-
+//유저 이름 / 이미지 url / 닉네임 / 휴대폰번호
             //뽑아낸 username 과 role값을 가지고 jwtUtil에 토큰을 만들어 달라고 전달한다.
             String token = jwtUtil.createJwt(email,60*60L*1000);
 
-            res.addHeader("Authorization", "Bearer " + token); //인증방식을 붙이고 토큰 붙이고 사용 (필수) HTTP 인증 방식 -> rfc 7235 정의에 따라 인증 헤더 형태를 가져야 함
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("name", name);
+            responseJson.put("imageUrl", imageUrl);
+            responseJson.put("nickname", nickname);
+            responseJson.put("phone", phone);
+
+            res.addHeader("Authorization", "Bearer " + token);
+            res.setContentType("application/json;charset=UTF-8");
+            res.getWriter().write(responseJson.toString());
+            res.setStatus(HttpServletResponse.SC_OK);
+
+            //인증방식을 붙이고 토큰 붙이고 사용 (필수) HTTP 인증 방식 -> rfc 7235 정의에 따라 인증 헤더 형태를 가져야 함
         }catch (Exception e){
             log.info("success 에러");
             e.printStackTrace();

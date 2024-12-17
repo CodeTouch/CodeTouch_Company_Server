@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -23,5 +24,6 @@ public class Payment {
     private CompanyUser user;
     private int siteId;
     private String merchantId;
-    private LocalDateTime createdAt;
+    @CreationTimestamp
+    private LocalDateTime createAt;
 }

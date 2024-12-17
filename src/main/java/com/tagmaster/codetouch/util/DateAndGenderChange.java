@@ -1,13 +1,18 @@
 package com.tagmaster.codetouch.util;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class DateAndGenderChange {
 
-    public static String dateChange(LocalDateTime birth) {
+    public static LocalDate DateTimeToDate(LocalDateTime data) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.format(birth);
+        return data.toLocalDate();
+    }
+    public static LocalDateTime DateToDateTime(LocalDate data){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return data.atStartOfDay();
     }
 
     public static Integer genderChange(String birth, String gender){

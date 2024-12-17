@@ -1,29 +1,32 @@
-package com.tagmaster.codetouch.service;
+package com.tagmaster.codetouch.service.customer;
 
 
 import com.tagmaster.codetouch.dto.CreateSiteDTO;
-import com.tagmaster.codetouch.dto.company.SignupDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
 import com.tagmaster.codetouch.entity.customer.Site;
 import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerSiteRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public class SiteSvc {
     private final CompanyUserRepo companyUserRepo;
     private final CustomerUserRepo customerUserRepo;
     private final CustomerSiteRepo customerSiteRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public SiteSvc(CompanyUserRepo companyUserRepo, CustomerUserRepo customerUserRepo, CustomerSiteRepo customerSiteRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public SiteSvc(CompanyUserRepo companyUserRepo,
+                   CustomerUserRepo customerUserRepo,
+                   CustomerSiteRepo customerSiteRepo,
+                   BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.companyUserRepo = companyUserRepo;
         this.customerUserRepo = customerUserRepo;
         this.customerSiteRepo = customerSiteRepo;

@@ -24,7 +24,7 @@ public class SignupSvc {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Transactional("chainedTransactionManager")
+    @Transactional/*("chainedTransactionManager")*/
     public void SignupProcess(SignupDTO signupDTO) {
         String email = signupDTO.getEmail();
 

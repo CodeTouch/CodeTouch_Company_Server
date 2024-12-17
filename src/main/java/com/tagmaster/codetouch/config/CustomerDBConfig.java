@@ -2,6 +2,7 @@ package com.tagmaster.codetouch.config;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
+@ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true", matchIfMissing = false)
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(

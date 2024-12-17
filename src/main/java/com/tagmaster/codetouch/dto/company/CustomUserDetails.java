@@ -29,6 +29,7 @@ public class CustomUserDetails implements UserDetails {
         return companyUser.getEmail();
     }
 
+
     @Override
     public boolean isAccountNonExpired() { //expire되었는지
         return true;
@@ -47,5 +48,22 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    public String getName() {
+        return companyUser.getName();
+    }
+
+    public String getImageUrl() {
+        return companyUser.getImageUrl();
+    }
+
+    public String getNickname() {
+        return companyUser.getNickname();
+    }
+
+    public String getPhone() {
+        return companyUser.getPhone();
     }
 }

@@ -15,18 +15,16 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/패스")
+@RequestMapping("/회사")
 public class PASSCtrl {
 
     private final AuthSvc authService;
-    private final CompanyUserRepo companyUserRepository;
 
-    public PASSCtrl(AuthSvc authService, CompanyUserRepo companyUserRepository) {
+    public PASSCtrl(AuthSvc authService) {
         this.authService = authService;
-        this.companyUserRepository = companyUserRepository;
     }
 
-    @GetMapping("/인증/{imp_uid}")
+    @GetMapping("/패스/인증/{imp_uid}")
     public ResponseEntity<Map<String, Object>> getCertifications(@PathVariable String imp_uid) {
         try {
             Map<String, Object> response = new HashMap<>();
@@ -42,25 +40,5 @@ public class PASSCtrl {
         }
     }
 
-    @GetMapping("/회원/아이디찾기/{imp_uid}")
-    public ResponseEntity<Map<String, Object>> EmailFind(@PathVariable String imp_uid) {
-        try {
-            Map<String, Object> response = new HashMap<>();
-            String accessToken = TokenUtil.TokenUtil();
-            APIPhoneDTO dto = authService.AuthReqService(APIPhoneDTO.class, imp_uid, accessToken);
-            CompanyUser user = companyUserRepository.findByPhone(dto.getPhone());
-            List<CompanyUser> test = companyUserRepository.findAll();
-            if (user.getEmail() == null) {
-                return ResponseEntity.badRequest().body(response);
-            }
-            response.put("success", "이메일로 받기 성공");
-            response.put("email", user.getEmail());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("fail", "이메일로 찾기 실패띠");
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
 }
 
