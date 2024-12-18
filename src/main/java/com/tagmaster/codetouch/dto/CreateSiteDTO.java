@@ -9,4 +9,5 @@ import lombok.Setter;
 public class CreateSiteDTO {
     private String email;
     private String siteName;
+    private String url;
 }

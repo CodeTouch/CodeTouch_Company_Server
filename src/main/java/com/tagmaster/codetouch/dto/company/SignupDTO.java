@@ -13,4 +13,5 @@ public class SignupDTO {
     private String password;
     private String birth;
     private Integer gender;
+    private Integer agree;
 }

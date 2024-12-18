@@ -4,6 +4,7 @@ import com.tagmaster.codetouch.dto.PwChangeDTO;
 import com.tagmaster.codetouch.dto.company.ChangeInfoDTO;
 import com.tagmaster.codetouch.service.ChangeUserInfoSvc;
 import com.tagmaster.codetouch.service.UserSvc;
+import jakarta.annotation.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class UserCtrl {
         this.changeUserInfoSvc = changeUserInfoSvc;
     }
     @PostMapping("/회원/개인정보수정")
-    public ResponseEntity<String> infoChange(@RequestParam String email, @RequestParam String nickname, @RequestParam String name, @RequestParam String phone, @RequestParam String updateImageName, @RequestParam("updateImage") MultipartFile updateImage) {
+    public ResponseEntity<String> infoChange(@RequestParam String email, @RequestParam String nickname, @RequestParam String name, @RequestParam String phone, @RequestParam String updateImageName, @Nullable @RequestParam("updateImage") MultipartFile updateImage) {
         try{
             ChangeInfoDTO changeInfoDTO = new ChangeInfoDTO();
             changeInfoDTO.setEmail(email);
@@ -29,11 +30,11 @@ public class UserCtrl {
             changeInfoDTO.setPhone(phone);
             changeInfoDTO.setUpdateImageName(updateImageName);
             changeInfoDTO.setUpdateImage(updateImage);
-
-        if (changeUserInfoSvc.changeUserInfo(changeInfoDTO)) {
-            return ResponseEntity.ok("수정이 완료되었습니다.");
+        String image = changeUserInfoSvc.changeUserInfo(changeInfoDTO);
+        if (image.equals("false")) {
+            return ResponseEntity.badRequest().body("개인 정보 수정에 실패하였습니다. 다시 시도해주세요.");
         }
-        return ResponseEntity.badRequest().body("수정에 실패하였습니다. 다시 시도해주세요.");
+            return ResponseEntity.ok(image);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("에러");
         }

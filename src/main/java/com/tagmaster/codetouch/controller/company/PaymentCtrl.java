@@ -26,13 +26,14 @@ public class PaymentCtrl {
     @PostMapping("/회원/결제내역저장")
     public ResponseEntity<String> paymentSave(@RequestBody PaymentDTO paymentDTO) {
         try {
-            String message = "";
-            message += paymentSvc.Save(paymentDTO);
-            message += paymentSvc.UpgradeSite(paymentDTO);
-
-            return ResponseEntity.ok(message);
+            if (paymentSvc.Save(paymentDTO).equals("성공")){
+                if (paymentSvc.UpgradeSite(paymentDTO).equals("성공")){
+                    return ResponseEntity.ok("결제 정보가 성공적으로 저장되었습니다.");
+                }
+            }
+            return ResponseEntity.badRequest().body("결제 정보를 저장하지 못하였습니다. 다시 시도해주세요.");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("");
+            return ResponseEntity.badRequest().body("결제정보를 저장하던 도중 에러가 발생했습니다. 다시 시도해주세요.");
         }
     }
 

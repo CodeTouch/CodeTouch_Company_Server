@@ -1,11 +1,14 @@
 package com.tagmaster.codetouch.service;
 
+import com.tagmaster.codetouch.dto.APIPhoneDTO;
 import com.tagmaster.codetouch.dto.PwChangeDTO;
 import com.tagmaster.codetouch.dto.PwFindDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
 import com.tagmaster.codetouch.entity.customer.CustomerUser;
 import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
 import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
+import com.tagmaster.codetouch.service.identity.AuthSvc;
+import com.tagmaster.codetouch.util.TokenUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,19 +19,22 @@ import java.util.List;
 @Service
 @ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public class UserSvc {
-    private final CompanyUserRepo companyUserRepository;
+    private final CompanyUserRepo companyUserRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final CustomerUserRepo customerUserRepository;
+    private final AuthSvc authSvc;
 
-    public UserSvc(CompanyUserRepo companyUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerUserRepo customerUserRepository) {
-        this.companyUserRepository = companyUserRepository;
+    public UserSvc(CompanyUserRepo companyUserRepo, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerUserRepo customerUserRepository, AuthSvc authSvc) {
+        this.companyUserRepo = companyUserRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.customerUserRepository = customerUserRepository;
+        this.authSvc = authSvc;
     }
 
     public String findPw(PwFindDTO pwFindDTO) {
-        CompanyUser companyUserEmail = companyUserRepository.findByEmail(pwFindDTO.getEmail());
-        CompanyUser companyUserPhone = companyUserRepository.findByPhone(pwFindDTO.getPhone());
+
+        CompanyUser companyUserEmail = companyUserRepo.findByEmail(pwFindDTO.getEmail());
+        CompanyUser companyUserPhone = companyUserRepo.findByPhone(pwFindDTO.getPhone());
         try {
             if (companyUserEmail == null || companyUserPhone == null) {
                 return "FAIL";
@@ -47,7 +53,7 @@ public class UserSvc {
 
     @Transactional/*("chainedTransactionManager")*/
     public String changePw(PwChangeDTO pwChangeDTO) {
-        CompanyUser companyUser = companyUserRepository.findByEmail(pwChangeDTO.getEmail());
+        CompanyUser companyUser = companyUserRepo.findByEmail(pwChangeDTO.getEmail());
         try {
             if (companyUser == null) {
                 return "FAIL";
@@ -67,9 +73,22 @@ public class UserSvc {
             return "ERROR";
         }
     }
+    public String emailFind(String imp_uid) {
+        try {
+            if (imp_uid == null) {
+                return "FAIL";
+            }
+            String accessToken = TokenUtil.TokenUtil();
+            APIPhoneDTO dto = authSvc.AuthReqService(APIPhoneDTO.class, imp_uid, accessToken);
+            CompanyUser user = companyUserRepo.findByPhone(dto.getPhone());
+            return user.getEmail();
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
 
     public Boolean isPwCorrect(PwChangeDTO pwChangeDTO) {
-        CompanyUser companyUser = companyUserRepository.findByEmail(pwChangeDTO.getEmail());
+        CompanyUser companyUser = companyUserRepo.findByEmail(pwChangeDTO.getEmail());
         if (companyUser == null) {
             return false;
         }

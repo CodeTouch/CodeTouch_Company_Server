@@ -18,36 +18,36 @@ public class ChangeUserInfoSvc {
         this.companyUserRepo = companyUserRepo;
     }
 
-    public Boolean changeUserInfo(ChangeInfoDTO changeInfoDTO) {
+    public String changeUserInfo(ChangeInfoDTO changeInfoDTO) {
         try {
             CompanyUser companyUser = companyUserRepo.findByEmail(changeInfoDTO.getEmail());
             if (companyUser == null) {
-                return false;
+                return "false";
             }
             companyUser.setNickname(changeInfoDTO.getNickname());
             companyUser.setPhone(changeInfoDTO.getPhone());
             MultipartFile file = changeInfoDTO.getUpdateImage();
-            String originalFilename = file.getOriginalFilename();
-            String splitFile = "";
+            if (file != null) {
+                String originalFilename = file.getOriginalFilename();
+                String splitFile = "";
 
-            if (originalFilename != null && originalFilename.contains(".")) {
-                splitFile = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-            }
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    splitFile = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+                }
 
-            if (!splitFile.equalsIgnoreCase("jpg") && !splitFile.equalsIgnoreCase("png")) {
-                return false;
-            }
-
+                if (!splitFile.equalsIgnoreCase("jpg") && !splitFile.equalsIgnoreCase("png")) {
+                    return "false";
+                }
 // 확장자 검증 후 저장 수행
-            String image = FileUtil.imageSave(file);
-            if (image == null) {
-                return false;
+                String image = FileUtil.imageSave(file);
+                companyUser.setImageUrl(image);
+                companyUserRepo.save(companyUser);
+                return image;
+            } else {
+                return changeInfoDTO.getUpdateImageName();
             }
-            companyUser.setImageUrl(image);
-            companyUserRepo.save(companyUser);
-            return true;
         } catch (Exception e) {
-            return false;
+            return "false";
         }
     }
 }
