@@ -22,11 +22,15 @@ public class SiteCtrl {
     }
     @PostMapping("/회원/사이트생성")
     public ResponseEntity<String> createSite(@RequestBody CreateSiteDTO createSiteDTO) {
-
-        if (siteSvc.siteCreate(createSiteDTO) == null) {
+        try{
+            boolean test = siteSvc.siteCreate(createSiteDTO);
+        if (!test) {
             return ResponseEntity.badRequest().body("사이트 생성에 실패하였습니다. 다시 시도해주세요.");
         }
         return ResponseEntity.ok("사이트 생성에 성공하였습니다!");
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body("사이트 생성 중 에러가 발생하였습니다.");
+        }
     }
 
     @GetMapping("/회원/사이트정보/{email}")
@@ -35,7 +39,7 @@ public class SiteCtrl {
             List<Site> siteList = siteSvc.siteRead(email);
             if (siteList == null) {
                 Map<String, Object> result = new HashMap<>();
-                result.put("FAIL", "회원의 사이트 정보가 없습니다. 다시 시도해주세요.");
+                result.put("NOTFOUND", "회원의 사이트 정보가 없습니다. 다시 시도해주세요.");
                 return ResponseEntity.ok(result);
             }
             Map<String, Object> result = new HashMap<>();
@@ -44,7 +48,7 @@ public class SiteCtrl {
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             Map<String, Object> result = new HashMap<>();
-            result.put("ERROR", "회원의 사이트 정보 조회에 실패하였습니다. 다시 시도해주세요.");
+            result.put("ERROR", "회원의 사이트 정보 조회 중 에러가 발생하였습니다. 다시 시도해주세요.");
             return ResponseEntity.badRequest().body(result);
         }
     }
@@ -58,11 +62,11 @@ public class SiteCtrl {
                 return ResponseEntity.ok(result);
             }
             Map<String, Object> result = new HashMap<>();
-            result.put("FAIL", "일치하는 회원 혹은 사이트가 없습니다.");
+            result.put("NOTFOUND", "일치하는 회원 혹은 사이트가 없습니다.");
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
             Map<String, Object> result = new HashMap<>();
-            result.put("ERROR", "사이트 삭제에 실패하였습니다.");
+            result.put("ERROR", "사이트 삭제 중 에러가 발생했습니다. 다시 시도해주세요.");
             return ResponseEntity.badRequest().body(result);
         }
     }

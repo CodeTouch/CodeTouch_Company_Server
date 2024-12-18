@@ -15,12 +15,16 @@ import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
 import com.tagmaster.codetouch.util.DateAndGenderChange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 @ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
@@ -68,10 +72,10 @@ public class PaymentSvcImpl implements PaymentSvc {
     @Transactional
     public String UpgradeSite(PaymentDTO paymentDTO) {
         try {
-            CustomerUser user = customerUserRepository.findByEmailAndSiteId(paymentDTO.getEmail(), paymentDTO.getSiteId());
-            if (user == null) {
-                return "에러";
-            }
+//            CompanyUser user = customerUserRepository.findByEmailAndSiteId(paymentDTO.getEmail(), paymentDTO.getSiteId());
+//            if (user == null) {
+//                return "에러";
+//            }
             Site site = customerSiteRepo.findById(paymentDTO.getSiteId()).get();
             site.setExpiry(paymentDTO.getExpiry());
             site.setPayState(1);
@@ -95,11 +99,16 @@ public class PaymentSvcImpl implements PaymentSvc {
                 return null;
             }
 
-            List<Payment> paymentList;
+            List<Payment> paymentList = new ArrayList<>();
             if (check){
                 // 1번 전부를 요청했다.
-                // Payment 에서 해당 이메일로 전부 끌어서 List<Payment> 에 담아준다.
-                paymentList = paymentRepository.findByUserOrderByCreateAtDesc(user);
+//                PageRequest page = PageRequest.of(0, 10);// Payment 에서 해당 이메일로 전부 끌어서 List<Payment> 에 담아준다.
+//                Page<Payment> PagePaymentList = paymentRepository.findByUserOrderByCreateAtDesc(user, page);
+//                for (Payment payment : PagePaymentList) {
+//                    paymentList.add(payment);
+//                }
+                paymentList = paymentRepository.findTop5ByUserOrderByCreateAtDesc(user);
+
             }else{
                 // 2번 3개만 요청한다.
                 // Payment 에서 해당 이메일로 3개만(createAt 가장 최근) List<Payment> 에 담아준다.

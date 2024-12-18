@@ -28,4 +28,5 @@ public class CompanyUser {
     private LocalDate birth;
     private Integer gender;
     private String imageUrl;
+    private Integer agree;
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,5 +30,6 @@ public class Site {
     private String mainImage;
     private Integer payState;
     private LocalDate expiry;
-
+    private String url;
+    private int isDelete;
 }

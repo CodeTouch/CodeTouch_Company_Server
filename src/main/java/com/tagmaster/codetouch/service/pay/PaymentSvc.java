@@ -4,6 +4,7 @@ import com.tagmaster.codetouch.dto.PayReadDTO;
 import com.tagmaster.codetouch.dto.PaymentDTO;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
+import java.awt.print.Pageable;
 import java.util.List;
 @ConditionalOnProperty(prefix = "spring.datasource.customer", name = "enabled", havingValue = "true")
 public interface PaymentSvc {
