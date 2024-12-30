@@ -15,7 +15,8 @@ import lombok.ToString;
 public class Templates {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int siteTemplateId;
+    @Column()
+    private int siteTemplatesId;
 
     private String header;
     private String page;
