@@ -3,11 +3,9 @@ package com.tagmaster.codetouch.service.customer;
 
 import com.tagmaster.codetouch.dto.CreateSiteDTO;
 import com.tagmaster.codetouch.entity.company.CompanyUser;
-import com.tagmaster.codetouch.entity.customer.CustomerUser;
-import com.tagmaster.codetouch.entity.customer.Site;
+import com.tagmaster.codetouch.entity.customer.*;
 import com.tagmaster.codetouch.repository.company.CompanyUserRepo;
-import com.tagmaster.codetouch.repository.customer.CustomerSiteRepo;
-import com.tagmaster.codetouch.repository.customer.CustomerUserRepo;
+import com.tagmaster.codetouch.repository.customer.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,16 +19,26 @@ public class SiteSvc {
     private final CompanyUserRepo companyUserRepo;
     private final CustomerUserRepo customerUserRepo;
     private final CustomerSiteRepo customerSiteRepo;
+
+    private final DesignRepo designRepo;
+    private final PostedDesignRepo postedDesignRepo;
+    private final TemplatesRepo templatesRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public SiteSvc(CompanyUserRepo companyUserRepo,
                    CustomerUserRepo customerUserRepo,
                    CustomerSiteRepo customerSiteRepo,
-                   BCryptPasswordEncoder bCryptPasswordEncoder) {
+                   BCryptPasswordEncoder bCryptPasswordEncoder,
+                   DesignRepo designRepo,
+                   PostedDesignRepo postedDesignRepo,
+                   TemplatesRepo templatesRepo) {
         this.companyUserRepo = companyUserRepo;
         this.customerUserRepo = customerUserRepo;
         this.customerSiteRepo = customerSiteRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.designRepo = designRepo;
+        this.templatesRepo = templatesRepo;
+        this.postedDesignRepo = postedDesignRepo;
     }
 
     public boolean siteCreate(CreateSiteDTO createSiteDTO) {
@@ -57,19 +65,22 @@ public class SiteSvc {
                     String url = createSiteDTO.getUrl();
                     String realUrl = url + ".코드터치.한글";
 
-                // 사이트 생성
-                Site site = new Site();
-                site.setSiteName(createSiteDTO.getSiteName());
-                site.setUserId(customerUser);
-                site.setPayState(0);
-                site.setUrl(realUrl);
-                customerSiteRepo.save(site);
+                    // 사이트 생성
+                    Site site = new Site();
+                    site.setSiteName(createSiteDTO.getSiteName());
+                    site.setUserId(customerUser);
+                    site.setPayState(0);
+                    site.setUrl(realUrl);
+                    customerSiteRepo.save(site);
 
-                customerUser.setSiteId(site.getSiteId());
-                customerUserRepo.save(customerUser);
-                // 사이트 생성이후
-                // 위에 커스터머 유저에 사이트 주입
-                // 커스터머 유저 세이브
+                    customerUser.setSiteId(site.getSiteId());
+                    customerUserRepo.save(customerUser);
+                    // 사이트 생성이후
+                    // 위에 커스터머 유저에 사이트 주입
+                    // 커스터머 유저 세이브
+
+                    insertDesign(createSiteDTO.getTemplateId(), site.getUrl());
+
                     return true;
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -129,6 +140,29 @@ public class SiteSvc {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean insertDesign(int templatesId, String url) {
+        Templates findTemplate = templatesRepo.findById(templatesId).get();
+        Site site = customerSiteRepo.findByUrl(url);
+
+        Design design = new Design();
+        design.setSiteId(site);
+        design.setPage(findTemplate.getPage());
+        design.setHeader(findTemplate.getHeader());
+        design.setFooter(findTemplate.getFooter());
+
+        designRepo.save(design);
+
+        PostedDesign postedDesign = new PostedDesign();
+        postedDesign.setSiteId(site);
+        postedDesign.setFooter(findTemplate.getFooter());
+        postedDesign.setHeader(findTemplate.getHeader());
+        postedDesign.setPage(findTemplate.getPage());
+
+        postedDesignRepo.save(postedDesign);
+
+        return true;
     }
 }
 

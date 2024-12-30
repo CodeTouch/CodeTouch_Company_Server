@@ -12,4 +12,5 @@ import java.util.List;
 public interface CustomerSiteRepo extends JpaRepository<Site, Integer> {
 //    Site findByDeletedAtIsNullAndSiteId(int siteId);
     Site findByIsDeleteAndSiteId(int isDelete, int siteId);
+    Site findByUrl(String url);
 }

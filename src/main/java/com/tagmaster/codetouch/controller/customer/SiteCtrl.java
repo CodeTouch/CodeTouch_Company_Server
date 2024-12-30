@@ -23,10 +23,10 @@ public class SiteCtrl {
     @PostMapping("/회원/사이트생성")
     public ResponseEntity<String> createSite(@RequestBody CreateSiteDTO createSiteDTO) {
         try{
-            boolean test = siteSvc.siteCreate(createSiteDTO);
-        if (!test) {
-            return ResponseEntity.badRequest().body("사이트 생성에 실패하였습니다. 다시 시도해주세요.");
-        }
+            boolean createResult = siteSvc.siteCreate(createSiteDTO);
+            if (!createResult) {
+                return ResponseEntity.badRequest().body("사이트 생성에 실패하였습니다. 다시 시도해주세요.");
+            }
         return ResponseEntity.ok("사이트 생성에 성공하였습니다!");
     } catch (Exception e) {
         return ResponseEntity.badRequest().body("사이트 생성 중 에러가 발생하였습니다.");
